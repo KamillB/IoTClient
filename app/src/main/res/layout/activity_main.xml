@@ -1,0 +1,42 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/devices_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/user_info_button"
+        android:fontFamily="serif"
+        android:gravity="center"
+        android:text="@string/devices_title_string"
+        android:textSize="14sp" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@id/devices_title" />
+
+    <Button
+        android:id="@+id/user_info_button"
+        android:layout_width="106dp"
+        android:layout_height="59dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignTop="@+id/new_device_button"
+        android:layout_marginEnd="20dp"
+        android:text="@string/btnLeft" />
+
+    <Button
+        android:id="@+id/new_device_button"
+        android:layout_width="150dp"
+        android:layout_height="57dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="15dp"
+        android:text="@string/btnRight" />
+
+</RelativeLayout>

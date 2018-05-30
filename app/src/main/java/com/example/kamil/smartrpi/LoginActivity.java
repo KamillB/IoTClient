@@ -10,6 +10,7 @@ import android.widget.EditText;
 public class LoginActivity extends AppCompatActivity {
     Button login_btn, cancel_btn;
     EditText name_text, password_text;
+    String msg;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,7 +25,7 @@ public class LoginActivity extends AppCompatActivity {
 
     void startMainActivity(){
         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-        startActivity(intent);
+        LoginActivity.this.startActivity(intent);
     }
 
 }

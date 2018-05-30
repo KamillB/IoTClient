@@ -59,7 +59,8 @@
         android:text="login"
         android:layout_alignParentBottom="true"
         android:layout_toLeftOf="@+id/login_title"
-        android:layout_toStartOf="@+id/login_title" />
+        android:layout_toStartOf="@+id/login_title"
+        android:onClick="startMainActivity"/>
 
     <Button
         android:id="@+id/cancel_button"
