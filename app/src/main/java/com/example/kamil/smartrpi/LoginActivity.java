@@ -21,11 +21,18 @@ public class LoginActivity extends AppCompatActivity {
         cancel_btn = (Button) findViewById(R.id.cancel_button);
         name_text = (EditText) findViewById(R.id.name_text);
         password_text = (EditText) findViewById(R.id.password_text);
+
+        login_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startMainActivity();
+            }
+        });
     }
 
     void startMainActivity(){
         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-        LoginActivity.this.startActivity(intent);
+        startActivity(intent);
     }
 
 }
