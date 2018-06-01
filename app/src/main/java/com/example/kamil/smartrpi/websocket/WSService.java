@@ -1,4 +1,4 @@
-package com.example.kamil.smartrpi.WebSocket;
+package com.example.kamil.smartrpi.websocket;
 
 import android.app.Activity;
 import android.app.Service;
