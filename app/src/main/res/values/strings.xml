@@ -3,4 +3,6 @@
     <string name="btnLeft">User Info</string>
     <string name="btnRight">Add new device</string>
     <string name="devices_title_string">Available devices</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_favorite">Favorite</string>
 </resources>
