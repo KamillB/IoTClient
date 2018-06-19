@@ -8,14 +8,18 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.widget.Toast;
 
+import com.example.kamil.smartrpi.models.MessageWS;
+
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.WebSocket;
 
+import com.google.gson.Gson;
 
 public class WSService extends Service {
     private boolean shouldContunue = true;
-    private final String WS_URL = "ws://echo.websocket.org";
+    //private final String WS_URL = "ws://echo.websocket.org";
+    private final String WS_URL = "ws://192.168.0.102/websocket";
     private static WSService instance = null;
     private OkHttpClient client;
     Request request;
@@ -85,11 +89,12 @@ public class WSService extends Service {
         super.onDestroy();
     }
 
-    public void doSomethingFirst() {
+    public void sensorPageRefresh() {
         handler.postDelayed(serviceRunnable, 0);
-        System.out.println("DOING SOMETHING FIRST LALALALALALALALALAL");
-        Double n = Math.random();
-        ws.send(n.toString());
+
+        MessageWS msg = new MessageWS();
+        Gson gson = new Gson();
+        ws.send(gson.toJson(msg));
     }
 
 
