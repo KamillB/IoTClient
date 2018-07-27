@@ -12,20 +12,21 @@
         app:showAsAction="ifRoom" />
 
     <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="200"
-        android:title="@string/action_settings"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/action_search"
-        android:orderInCategory="300"
-        android:title="Search"
-        app:showAsAction="never"/>
-
-    <item
         android:id="@+id/action_about"
         android:orderInCategory="400"
-        android:title="About"
+        android:title="@string/action_about"
         app:showAsAction="never"/>
+    <item
+        android:id="@+id/action_add_device"
+        android:orderInCategory="500"
+        android:title="@string/action_add_device"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_log_out"
+        android:orderInCategory="600"
+        android:title="@string/action_log_out"
+        app:showAsAction="never" />
+
 
 </menu>

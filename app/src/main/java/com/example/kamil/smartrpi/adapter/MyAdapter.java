@@ -1,10 +1,13 @@
-package com.example.kamil.smartrpi;
+package com.example.kamil.smartrpi.adapter;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.example.kamil.smartrpi.models.Article;
+import com.example.kamil.smartrpi.R;
 
 import java.util.ArrayList;
 

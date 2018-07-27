@@ -5,17 +5,17 @@ import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
 import okio.ByteString;
 
-
 public final class EchoWebSocketListener extends WebSocketListener {
     private static final int NORMAL_CLOSURE_STATUS = 1000;
     private WebSocket websocket;
+
     @Override
     public void onOpen(WebSocket webSocket, Response response) {
         System.out.println("WebSocket onOpen");
     }
     @Override
     public void onMessage(WebSocket webSocket, String text) {
-        System.out.println(text);
+        System.out.println("WS RECEIVED " + text);
     }
     @Override
     public void onMessage(WebSocket webSocket, ByteString bytes) {
