@@ -3,22 +3,31 @@ package com.example.kamil.smartrpi.models;
 import java.util.List;
 
 public class Device {
-    private List<TemperatureModel> temperatureList;
-    private List<ImageModel> cameraList;
+    private String mac;
+    private List<Sensor> sensorList;
 
     Device(){
     }
 
-    public Device(List<TemperatureModel> temperatureList, List<ImageModel> cameraList) {
-        this.temperatureList = temperatureList;
-        this.cameraList = cameraList;
+    public Device(String mac, List<Sensor> sensorList) {
+        this.mac = mac;
+        this.sensorList = sensorList;
     }
 
-    public List<TemperatureModel> getTemperatureList() { return temperatureList; }
 
-    public List<ImageModel> getCameraList() { return cameraList; }
+    public String getMac() {
+        return mac;
+    }
 
-    public void setTemperatureList(List<TemperatureModel> temperatureList) { this.temperatureList = temperatureList; }
+    public List<Sensor> getSensorList() {
+        return sensorList;
+    }
 
-    public void setCameraList(List<ImageModel> cameraList) { this.cameraList = cameraList; }
+    public void setMac(String mac) {
+        this.mac = mac;
+    }
+
+    public void setSensorList(List<Sensor> sensorList) {
+        this.sensorList = sensorList;
+    }
 }

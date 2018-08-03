@@ -1,7 +1,7 @@
 package com.example.kamil.smartrpi.models;
 
 public class TemperatureModel {
-    private String owner;
+    private String ownerSerialNumber;
     private Double temp;
     private Long milis;
     private String name;
@@ -9,14 +9,14 @@ public class TemperatureModel {
     TemperatureModel(){
     }
 
-    public TemperatureModel(String owner, Double temp, Long milis, String name) {
-        this.owner = owner;
+    public TemperatureModel(String ownerSerialNumber, Double temp, Long milis, String name) {
+        this.ownerSerialNumber = ownerSerialNumber;
         this.temp = temp;
         this.milis = milis;
         this.name = name;
     }
 
-    public String getOwner() { return owner; }
+    public String getOwnerSerialNumber() { return ownerSerialNumber; }
 
     public Double getTemp() { return temp; }
 
@@ -24,7 +24,7 @@ public class TemperatureModel {
 
     public String getName() { return name; }
 
-    public void setOwner(String owner) { this.owner = owner; }
+    public void setOwnerSerialNumber(String ownerSerialNumber) { this.ownerSerialNumber = ownerSerialNumber; }
 
     public void setTemp(Double temp) { this.temp = temp; }
 
