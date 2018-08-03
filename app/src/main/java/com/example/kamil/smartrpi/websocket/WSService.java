@@ -2,28 +2,26 @@ package com.example.kamil.smartrpi.websocket;
 
 import android.app.Activity;
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.kamil.smartrpi.BuildConfig;
-import com.example.kamil.smartrpi.R;
-import com.example.kamil.smartrpi.models.MessageWS;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.Response;
 import okhttp3.WebSocket;
+import okhttp3.WebSocketListener;
+import okio.ByteString;
 
 import com.example.kamil.smartrpi.models.*;
 import com.google.gson.Gson;
 
-import org.w3c.dom.Text;
+import java.util.ArrayList;
+import java.util.List;
 
 public class WSService extends Service {
     private boolean shouldContunue = true;
@@ -40,7 +38,7 @@ public class WSService extends Service {
     private Gson gson = new Gson();
     private String sessionKey;
 
-    //check if service exists
+
     public static boolean isInstanceCreated(){
         return instance != null;
     }
@@ -50,12 +48,83 @@ public class WSService extends Service {
         @Override
         public void run() {
             if (shouldContunue) {
+                System.out.println("this is running");
                 Double n = Math.random();
                 activity.changeBtnName(n.toString());
                 handler.postDelayed(this, 1000);
             }
         }
     };
+
+    public final class EchoWebSocketListener extends WebSocketListener {
+        private static final int NORMAL_CLOSURE_STATUS = 1000;
+        private WebSocket websocket;
+
+        @Override
+        public void onOpen(WebSocket webSocket, Response response) {
+            System.out.println("WebSocket onOpen");
+        }
+        @Override
+        public void onMessage(WebSocket webSocket, String text) {
+            WsMessage msg = gson.fromJson(text,WsMessage.class);
+            System.out.println("TYPE " + msg.getType());
+            System.out.println("WS RECEIVED " + text);
+
+            switch(msg.getType()){
+                case "sensorList" :
+                    updateSensorList(msg.getPayload());
+                    break;
+            }
+        }
+        @Override
+        public void onMessage(WebSocket webSocket, ByteString bytes) {
+            System.out.println(bytes.hex());
+        }
+        @Override
+        public void onClosing(WebSocket webSocket, int code, String reason) {
+            System.out.println("WS ONCLOSING CODE " + code + " REASON " + reason);
+            webSocket.close(NORMAL_CLOSURE_STATUS, null);
+        }
+        @Override
+        public void onFailure(WebSocket webSocket, Throwable t, Response response) {
+            System.out.println("WS ON FAILURE " + t.getMessage() + " RESPONSE " + response);
+        }
+    }
+
+
+    public void updateSensorList(Payload payload){
+            List<ImageModel> iModel = payload.getImageModel();
+            List<TemperatureModel> tModel = payload.getTemperatureModel();
+
+            List<ImageSensor> iSensor = new ArrayList<>();
+//            for (ImageModel i : iModel){
+//                iSensor.add(new ImageSensor(
+//                        i.getName(),
+//                        i.getOwnerSerialNumber(),
+//                        i.getImage(),
+//                        i.getMilis()
+//                ));
+//            }
+
+            List<TemperatureSensor> tSensor = new ArrayList<>();
+            for (TemperatureModel t : tModel){
+                tSensor.add(new TemperatureSensor(
+                        t.getName(),
+                        t.getOwnerSerialNumber(),
+                        t.getTemp(),
+                        t.getMilis()
+                ));
+            }
+
+            List<Sensor> sensors = new ArrayList<>();
+            sensors.addAll(iSensor);
+            sensors.addAll(tSensor);
+
+            activity.updateRecyclerView(sensors);
+
+    }
+
+
 
     //returns the instance of the service
     public class LocalBinder extends Binder{
@@ -100,11 +169,19 @@ public class WSService extends Service {
     public void onDestroy(){
         shouldContunue = false;
         instance = null;
-        ws.close(1001,"");
+        ws.close(1000,"closeService");
         Toast.makeText(this, "Service onDestroy", Toast.LENGTH_LONG).show();
         super.onDestroy();
     }
 
+    public void getAllSensors() {
+        WsMessage message = new WsMessage(sessionKey, "refresh", new Payload());
+        ws.send(gson.toJson(message));
+    }
+
+
+
+    ///////////////////////////// JUST FOR TEST ///////////////////
     public void sensorPageRefresh() {
         handler.postDelayed(serviceRunnable, 0);
 
@@ -113,11 +190,22 @@ public class WSService extends Service {
 
         Toast.makeText(this, "MSG SENT", Toast.LENGTH_LONG).show();
     }
+    ///////////////////////////////////////////////////////////////
+
+    public void addNewDevice(String deviceKey){
+        Payload payload = new Payload();
+        payload.setDeviceKey(deviceKey);
+        WsMessage message = new WsMessage(sessionKey, "addDevice", payload);
+        ws.send(gson.toJson(message));
+    }
 
 
+
+    ////////////////////////////////////////////////////////////////
     //Interface for activity
     public interface Callbacks {
-        void updateClient(Integer data);
+        void updateClient(Payload payload);
         void changeBtnName(String name);
+        void updateRecyclerView(List<Sensor> sensory);
     }
 }

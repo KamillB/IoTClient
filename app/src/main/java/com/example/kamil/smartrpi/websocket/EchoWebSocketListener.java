@@ -5,6 +5,7 @@ import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
 import okio.ByteString;
 
+/*
 public final class EchoWebSocketListener extends WebSocketListener {
     private static final int NORMAL_CLOSURE_STATUS = 1000;
     private WebSocket websocket;
@@ -29,3 +30,4 @@ public final class EchoWebSocketListener extends WebSocketListener {
     public void onFailure(WebSocket webSocket, Throwable t, Response response) {}
 
 }
+*/
