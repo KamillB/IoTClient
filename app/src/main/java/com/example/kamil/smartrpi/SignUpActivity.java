@@ -47,8 +47,6 @@ public class SignUpActivity extends AppCompatActivity {
         name_text.addTextChangedListener(new SignUpNameTextWatcher());
         mail_text.addTextChangedListener(new SignUpMailTextWatcher());
         password_text.addTextChangedListener(new SignUpPasswordTextWatcher());
-
-
     }
 
     @OnClick(R.id.btn_signup)
