@@ -28,8 +28,8 @@ public class MyAdapter extends RecyclerView.Adapter {
 
         public MyViewHolder(View pItem) {
             super(pItem);
-            mTitle = (TextView) pItem.findViewById(R.id.article_title);
-            mContent = (TextView) pItem.findViewById(R.id.article_content);
+            mTitle = (TextView) pItem.findViewById(R.id.sensor_title);
+            mContent = (TextView) pItem.findViewById(R.id.sensor_content);
         }
     }
 
