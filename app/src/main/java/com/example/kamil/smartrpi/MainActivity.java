@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -36,6 +37,7 @@ public class MainActivity extends AppCompatActivity implements WSService.Callbac
     private ArrayList<Sensor> sensors = new ArrayList<>();
     private SensorAdapter sensorAdapter = new SensorAdapter();
     @Bind(R.id.recycler) RecyclerView recyclerView;
+    Handler handler = new Handler();
 
     private ServiceConnection mConnection = new ServiceConnection() {
         @Override
@@ -147,7 +149,7 @@ public class MainActivity extends AppCompatActivity implements WSService.Callbac
     }
 
     @Override
-    public void updateRecyclerView(List<Sensor> sensory){
+    public void updateRecyclerView(final List<Sensor> sensory){
 //        sensors = new ArrayList<>();
 //        for (Sensor s : sensory){
 //            sensors.add(s);
@@ -158,33 +160,24 @@ public class MainActivity extends AppCompatActivity implements WSService.Callbac
 //            } else {
 //                System.out.println("nope");
 //            }
-        for (Sensor s : sensors){
-            Integer i = sensors.indexOf(s);
-            sensors.remove(s);
-            sensorAdapter.notifyItemRemoved(i);
-            sensorAdapter.notifyDataSetChanged();
-        }
-        System.out.println(sensors.size());
-
-        for (Sensor s : sensory){
-            sensors.add(s);
-            System.out.println("item count " +sensorAdapter.getItemCount());
-            System.out.println("kafelek " + s.getName() + s.getOwnerDevice() + ((TemperatureSensor)s).getTemp() );
-            sensorAdapter.notifyItemInserted(sensors.size()-1);
-        }
 
 
 
-
-//        sensors.removeAll(sensors);
-//        sensorAdapter.setmSensors(sensors);
-//        System.out.println("sad");
-//        sensorAdapter.notifyDataSetChanged();
-//        System.out.println("sad");
-//        for (Sensor s : sensory){
-//            sensors.add(s);
-//            sensorAdapter.notifyItemInserted(sensors.size()-1);
-//        }
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                sensors = new ArrayList<>();
+                sensorAdapter = new SensorAdapter(sensors, recyclerView);
+                recyclerView.setAdapter(sensorAdapter);
+                sensorAdapter.notifyDataSetChanged();
+                for (Sensor s : sensory){
+                    sensors.add(s);
+                    System.out.println("item count " +sensorAdapter.getItemCount());
+                    System.out.println("kafelek " + s.getName() + s.getOwnerDevice() + ((TemperatureSensor)s).getTemp() );
+                    sensorAdapter.notifyItemInserted(sensors.size()-1);
+                }
+            }
+        });
 
     }
 

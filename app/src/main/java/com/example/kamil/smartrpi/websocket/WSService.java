@@ -66,15 +66,26 @@ public class WSService extends Service {
         }
         @Override
         public void onMessage(WebSocket webSocket, String text) {
-            WsMessage msg = gson.fromJson(text,WsMessage.class);
+            final WsMessage msg = gson.fromJson(text,WsMessage.class);
             System.out.println("TYPE " + msg.getType());
             System.out.println("WS RECEIVED " + text);
 
-            switch(msg.getType()){
-                case "sensorList" :
-                    updateSensorList(msg.getPayload());
-                    break;
-            }
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    switch(msg.getType()){
+                        case "sensorList" :
+                            updateSensorList(msg.getPayload());
+                            break;
+                    }
+                }
+            });
+
+//            switch(msg.getType()){
+//                case "sensorList" :
+//                    updateSensorList(msg.getPayload());
+//                    break;
+//            }
         }
         @Override
         public void onMessage(WebSocket webSocket, ByteString bytes) {
@@ -93,10 +104,13 @@ public class WSService extends Service {
 
 
     public void updateSensorList(Payload payload){
-            List<ImageModel> iModel = payload.getImageModel();
-            List<TemperatureModel> tModel = payload.getTemperatureModel();
-
-            List<ImageSensor> iSensor = new ArrayList<>();
+        final List<ImageModel> iModel = payload.getImageModel();
+        final List<TemperatureModel> tModel = payload.getTemperatureModel();
+        final List<Sensor> sensors = new ArrayList<>();
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                List<ImageSensor> iSensor = new ArrayList<>();
 //            for (ImageModel i : iModel){
 //                iSensor.add(new ImageSensor(
 //                        i.getName(),
@@ -106,20 +120,21 @@ public class WSService extends Service {
 //                ));
 //            }
 
-            List<TemperatureSensor> tSensor = new ArrayList<>();
-            for (TemperatureModel t : tModel){
-                tSensor.add(new TemperatureSensor(
-                        t.getName(),
-                        t.getOwnerSerialNumber(),
-                        t.getTemp(),
-                        t.getMilis()
-                ));
+                List<TemperatureSensor> tSensor = new ArrayList<>();
+                for (TemperatureModel t : tModel){
+                    tSensor.add(new TemperatureSensor(
+                            t.getName(),
+                            t.getOwnerSerialNumber(),
+                            t.getTemp(),
+                            t.getMilis()
+                    ));
+                }
+
+
+                sensors.addAll(iSensor);
+                sensors.addAll(tSensor);
             }
-
-            List<Sensor> sensors = new ArrayList<>();
-            sensors.addAll(iSensor);
-            sensors.addAll(tSensor);
-
+        });
             activity.updateRecyclerView(sensors);
 
     }

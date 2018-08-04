@@ -10,7 +10,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.kamil.smartrpi.R;
+import com.example.kamil.smartrpi.models.ImageSensor;
 import com.example.kamil.smartrpi.models.Sensor;
+import com.example.kamil.smartrpi.models.TemperatureSensor;
 
 import org.w3c.dom.Text;
 
@@ -63,15 +65,15 @@ public class SensorAdapter extends RecyclerView.Adapter {
 
 
 
-//        final ViewGroup pt = parent;
-//        view.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                int position = mRecyclerView.getChildAdapterPosition(v);
-//                mSensors.get(position).getName();
-//                Toast.makeText(pt.getContext(), "", Toast.LENGTH_LONG).show();
-//            }
-//        });
+        final ViewGroup pt = parent;
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int position = mRecyclerView.getChildAdapterPosition(v);
+                mSensors.get(position).getName();
+                Toast.makeText(pt.getContext(), "", Toast.LENGTH_LONG).show();
+            }
+        });
 
         return new SensorViewHolder(view);
     }
@@ -79,8 +81,14 @@ public class SensorAdapter extends RecyclerView.Adapter {
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, final int i) {
         Sensor sensor = mSensors.get(i);
-        ((SensorViewHolder) viewHolder).mTitle.setText(mSensors.get(i).getName());
-        ((SensorViewHolder) viewHolder).mContent.setText(mSensors.get(i).getOwnerDevice());
+        if (sensor instanceof TemperatureSensor){
+            ((SensorViewHolder) viewHolder).mTitle.setText("temperature " + sensor.getName());
+            ((SensorViewHolder) viewHolder).mContent.setText(((TemperatureSensor)sensor).getTemp().toString());
+        }
+        if (sensor instanceof ImageSensor){
+
+        }
+
     }
 
     @Override
