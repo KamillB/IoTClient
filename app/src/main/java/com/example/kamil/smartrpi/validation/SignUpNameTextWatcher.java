@@ -8,8 +8,6 @@ import android.widget.EditText;
 import butterknife.Bind;
 
 public class SignUpNameTextWatcher implements TextWatcher {
-    @Bind(R.id.sign_in_name_text) EditText name_text;
-
     @Override
     public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
 

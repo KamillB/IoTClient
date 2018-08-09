@@ -21,6 +21,7 @@ import com.example.kamil.smartrpi.models.*;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 public class WSService extends Service {
@@ -80,12 +81,6 @@ public class WSService extends Service {
                     }
                 }
             });
-
-//            switch(msg.getType()){
-//                case "sensorList" :
-//                    updateSensorList(msg.getPayload());
-//                    break;
-//            }
         }
         @Override
         public void onMessage(WebSocket webSocket, ByteString bytes) {
@@ -111,14 +106,14 @@ public class WSService extends Service {
             @Override
             public void run() {
                 List<ImageSensor> iSensor = new ArrayList<>();
-//            for (ImageModel i : iModel){
-//                iSensor.add(new ImageSensor(
-//                        i.getName(),
-//                        i.getOwnerSerialNumber(),
-//                        i.getImage(),
-//                        i.getMilis()
-//                ));
-//            }
+            for (ImageModel i : iModel){
+                iSensor.add(new ImageSensor(
+                        i.getName(),
+                        i.getOwner(),
+                        android.util.Base64.decode(i.getImage(), android.util.Base64.DEFAULT),
+                        i.getMilis()
+                ));
+            }
 
                 List<TemperatureSensor> tSensor = new ArrayList<>();
                 for (TemperatureModel t : tModel){

@@ -150,19 +150,6 @@ public class MainActivity extends AppCompatActivity implements WSService.Callbac
 
     @Override
     public void updateRecyclerView(final List<Sensor> sensory){
-//        sensors = new ArrayList<>();
-//        for (Sensor s : sensory){
-//            sensors.add(s);
-//            sensorAdapter.notifyItemInserted(sensors.size()-1);
-//
-//            if (sensor instanceof TemperatureSensor) {
-//                System.out.println("yea");
-//            } else {
-//                System.out.println("nope");
-//            }
-
-
-
         handler.post(new Runnable() {
             @Override
             public void run() {
@@ -172,8 +159,8 @@ public class MainActivity extends AppCompatActivity implements WSService.Callbac
                 sensorAdapter.notifyDataSetChanged();
                 for (Sensor s : sensory){
                     sensors.add(s);
-                    System.out.println("item count " +sensorAdapter.getItemCount());
-                    System.out.println("kafelek " + s.getName() + s.getOwnerDevice() + ((TemperatureSensor)s).getTemp() );
+//                    System.out.println("item count " +sensorAdapter.getItemCount());
+//                    System.out.println("kafelek " + s.getName() + s.getOwnerDevice() + ((TemperatureSensor)s).getTemp() );
                     sensorAdapter.notifyItemInserted(sensors.size()-1);
                 }
             }
