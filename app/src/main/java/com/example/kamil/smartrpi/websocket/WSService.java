@@ -57,6 +57,7 @@ public class WSService extends Service {
         }
     };
 
+    // Handle incomming websocket data
     public final class EchoWebSocketListener extends WebSocketListener {
         private static final int NORMAL_CLOSURE_STATUS = 1000;
         private WebSocket websocket;
@@ -105,7 +106,7 @@ public class WSService extends Service {
         handler.post(new Runnable() {
             @Override
             public void run() {
-                List<ImageSensor> iSensor = new ArrayList<>();
+            List<ImageSensor> iSensor = new ArrayList<>();
             for (ImageModel i : iModel){
                 iSensor.add(new ImageSensor(
                         i.getName(),
@@ -114,24 +115,20 @@ public class WSService extends Service {
                         i.getMilis()
                 ));
             }
-
-                List<TemperatureSensor> tSensor = new ArrayList<>();
-                for (TemperatureModel t : tModel){
-                    tSensor.add(new TemperatureSensor(
-                            t.getName(),
-                            t.getOwnerSerialNumber(),
-                            t.getTemp(),
-                            t.getMilis()
-                    ));
-                }
-
-
-                sensors.addAll(iSensor);
-                sensors.addAll(tSensor);
+            List<TemperatureSensor> tSensor = new ArrayList<>();
+            for (TemperatureModel t : tModel){
+                tSensor.add(new TemperatureSensor(
+                        t.getName(),
+                        t.getOwnerSerialNumber(),
+                        t.getTemp(),
+                        t.getMilis()
+                ));
+            }
+            sensors.addAll(iSensor);
+            sensors.addAll(tSensor);
             }
         });
             activity.updateRecyclerView(sensors);
-
     }
 
 
@@ -189,6 +186,21 @@ public class WSService extends Service {
         ws.send(gson.toJson(message));
     }
 
+    public void addNewDevice(String deviceKey){
+        Payload payload = new Payload();
+        payload.setDeviceKey(deviceKey);
+        WsMessage message = new WsMessage(sessionKey, "addDevice", payload);
+        ws.send(gson.toJson(message));
+    }
+
+    public void getSensorData(){
+        Payload payload = new Payload();
+        WsMessage message = new WsMessage(sessionKey, "i want i all and i want it now!", payload);
+        ws.send(gson.toJson(message));
+    }
+
+
+
 
 
     ///////////////////////////// JUST FOR TEST ///////////////////
@@ -201,15 +213,6 @@ public class WSService extends Service {
         Toast.makeText(this, "MSG SENT", Toast.LENGTH_LONG).show();
     }
     ///////////////////////////////////////////////////////////////
-
-    public void addNewDevice(String deviceKey){
-        Payload payload = new Payload();
-        payload.setDeviceKey(deviceKey);
-        WsMessage message = new WsMessage(sessionKey, "addDevice", payload);
-        ws.send(gson.toJson(message));
-    }
-
-
 
     ////////////////////////////////////////////////////////////////
     //Interface for activity

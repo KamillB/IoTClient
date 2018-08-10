@@ -1,38 +1,57 @@
 package com.example.kamil.smartrpi.adapter;
 
+import android.app.Activity;
+import android.app.Dialog;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.media.Image;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.example.kamil.smartrpi.MainActivity;
 import com.example.kamil.smartrpi.R;
 import com.example.kamil.smartrpi.models.ImageSensor;
 import com.example.kamil.smartrpi.models.Sensor;
 import com.example.kamil.smartrpi.models.TemperatureSensor;
+import com.example.kamil.smartrpi.websocket.WSService;
 
 import org.w3c.dom.Text;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+
+import static android.content.ContentValues.TAG;
 
 public class SensorAdapter extends RecyclerView.Adapter {
     private ArrayList<Sensor> mSensors;
     private RecyclerView mRecyclerView;
-    private Integer THUMBNAIL_WIDTH = 120;
-    private Integer THUMBNAIL_HEIGHT = 120;
+    private WSService mWsService;
+    private Activity activity;
+    private Integer THUMBNAIL_WIDTH = 150;
+    private Integer THUMBNAIL_HEIGHT = 150;
 
     public SensorAdapter(){
     }
 
-    public SensorAdapter(ArrayList<Sensor> pSensors, RecyclerView pRecyclerView){
+    public SensorAdapter(ArrayList<Sensor> pSensors, RecyclerView pRecyclerView, WSService mWsService, Activity activity){
         this.mSensors = pSensors;
         this.mRecyclerView = pRecyclerView;
+        this.mWsService = mWsService;
+        this.activity = activity;
     }
 
     public void setmSensors(ArrayList<Sensor> mSensors) {
@@ -43,16 +62,25 @@ public class SensorAdapter extends RecyclerView.Adapter {
         this.mRecyclerView = mRecyclerView;
     }
 
+    public void setWsService(WSService mWsService) { this.mWsService = mWsService; }
+
+    public void setActivity(Activity activity) { this.activity = activity; }
+
     private class SensorViewHolder extends RecyclerView.ViewHolder{
+        public ImageView mSensorImage;
         public TextView mTitle;
-        public TextView mContent;
-        public ImageView mImage;
+        public TextView mDate;
+        public TextView mContentText;
+        public ImageView mContentImage;
+
 
         public SensorViewHolder(View view){
             super(view);
+            mSensorImage = (ImageView) view.findViewById(R.id.sensor_image) ;
             mTitle = (TextView) view.findViewById(R.id.sensor_title);
-            mContent = (TextView) view.findViewById(R.id.sensor_content);
-            mImage = (ImageView) view.findViewById(R.id.sensor_image);
+            mDate = (TextView) view.findViewById(R.id.sensor_date);
+            mContentText = (TextView) view.findViewById(R.id.sensor_content_text);
+            mContentImage = (ImageView) view.findViewById(R.id.sensor_content_image);
         }
     }
 
@@ -63,7 +91,7 @@ public class SensorAdapter extends RecyclerView.Adapter {
 
     @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull final ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.recycler_element, parent, false);
 
@@ -72,9 +100,15 @@ public class SensorAdapter extends RecyclerView.Adapter {
             @Override
             public void onClick(View v) {
                 int position = mRecyclerView.getChildAdapterPosition(v);
-                mSensors.get(position).getName();
-                Toast.makeText(pt.getContext(), mSensors.get(position).getName(), Toast.LENGTH_LONG).show();
+                Sensor sensor = mSensors.get(position);
+                if (sensor instanceof TemperatureSensor){
+                    mWsService.getSensorData();
+                }
+                else if (sensor instanceof  ImageSensor){
+                    mWsService.getSensorData();
 
+                    showImageDialog(sensor);
+                }
             }
         });
 
@@ -86,17 +120,32 @@ public class SensorAdapter extends RecyclerView.Adapter {
         Sensor sensor = mSensors.get(i);
         if (sensor instanceof TemperatureSensor){
             Date date = new Date(((TemperatureSensor)sensor).getMilis());
+            DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss\ndd/MM/yyyy");
+            Resources resources = activity.getResources();
+            Integer imageIdentifier = resources.getIdentifier("house_icon", "drawable", activity.getPackageName());
 
-            ((SensorViewHolder) viewHolder).mTitle.setText("temperature " + sensor.getName());
-            ((SensorViewHolder) viewHolder).mContent.setText(date.toString());
+            ((SensorViewHolder) viewHolder).mSensorImage.setImageDrawable(resources.getDrawable(imageIdentifier));
+            ((SensorViewHolder) viewHolder).mTitle.setText(sensor.getName());
+            ((SensorViewHolder) viewHolder).mDate.setText(dateFormat.format(date.getTime()));
+
+            ((SensorViewHolder) viewHolder).mContentText.setText(((TemperatureSensor) sensor).getTemp().toString() + "°C");
+            ((SensorViewHolder) viewHolder).mContentImage.setVisibility(View.GONE);
         }
-        if (sensor instanceof ImageSensor){
+        else if (sensor instanceof ImageSensor){
             Date date = new Date(((ImageSensor)sensor).getMilis());
-            Bitmap thumbnailBitmal = BitmapFactory.decodeByteArray(((ImageSensor) sensor).getImage(), 0, ((ImageSensor) sensor).getImage().length);
+            Bitmap thumbnailBitmap = BitmapFactory.decodeByteArray(((ImageSensor) sensor).getImage(),
+                    0, ((ImageSensor) sensor).getImage().length);
+            DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss\ndd/MM/yyyy");
+            Resources resources = activity.getResources();
+            Integer imageIdentifier = resources.getIdentifier("house_icon", "drawable", activity.getPackageName());
 
-            ((SensorViewHolder) viewHolder).mTitle.setText("photo " + sensor.getName());
-            ((SensorViewHolder) viewHolder).mContent.setText(date.toString());
-            ((SensorViewHolder) viewHolder).mImage.setImageBitmap(Bitmap.createScaledBitmap(thumbnailBitmal, THUMBNAIL_WIDTH,THUMBNAIL_HEIGHT,false));
+            ((SensorViewHolder) viewHolder).mSensorImage.setImageDrawable(resources.getDrawable(imageIdentifier));
+            ((SensorViewHolder) viewHolder).mTitle.setText(sensor.getName());
+            ((SensorViewHolder) viewHolder).mDate.setText(dateFormat.format(date.getTime()));
+
+            ((SensorViewHolder) viewHolder).mContentText.setVisibility(View.GONE);
+            ((SensorViewHolder) viewHolder).mContentImage.setImageBitmap(Bitmap.createScaledBitmap(thumbnailBitmap,
+                    THUMBNAIL_WIDTH,THUMBNAIL_HEIGHT,false));
         }
 
     }
@@ -104,5 +153,20 @@ public class SensorAdapter extends RecyclerView.Adapter {
     @Override
     public int getItemCount() {
         return mSensors.size();
+    }
+
+    public void showImageDialog(Sensor sensor){
+        final Dialog nagDialog = new Dialog(activity,android.R.style.Theme_Black_NoTitleBar_Fullscreen);
+        nagDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        nagDialog.setCancelable(true);
+        nagDialog.setContentView(R.layout.preview_image);
+        ImageView ivPreview = (ImageView)nagDialog.findViewById(R.id.iv_preview_image);
+
+        byte[] byteImage = ((ImageSensor) sensor).getImage();
+        Drawable image = new BitmapDrawable(activity.getResources(),
+                BitmapFactory.decodeByteArray(byteImage, 0, byteImage.length));
+
+        ivPreview.setBackground(image);
+        nagDialog.show();
     }
 }

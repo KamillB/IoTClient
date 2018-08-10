@@ -14,9 +14,13 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.SpannableString;
+import android.text.method.LinkMovementMethod;
+import android.text.util.Linkify;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.example.kamil.smartrpi.adapter.SensorAdapter;
 import com.example.kamil.smartrpi.models.*;
@@ -117,7 +121,7 @@ public class MainActivity extends AppCompatActivity implements WSService.Callbac
             return true;
         }
         if (id == R.id.action_about){
-            //TODO popup window with informations about app
+            menuAbout();
             return true;
         }
         if (id == R.id.action_log_out){
@@ -126,18 +130,23 @@ public class MainActivity extends AppCompatActivity implements WSService.Callbac
         }
         if (id == R.id.action_add_device){
             addDevice();
-            //TODO add device to user
             return true;
         }
-
-
-
         return super.onOptionsItemSelected(item);
     }
 
     public void run(){
         //Execute some commands
         wsService.sensorPageRefresh();
+    }
+
+    @Override
+    protected void onDestroy() {
+        unbindService(mConnection);
+        stopService(serviceIntent);
+        System.out.println("main activity on destroy called");
+        super.onDestroy();
+        getDelegate().onDestroy();
     }
 
     @Override
@@ -154,25 +163,16 @@ public class MainActivity extends AppCompatActivity implements WSService.Callbac
             @Override
             public void run() {
                 sensors = new ArrayList<>();
-                sensorAdapter = new SensorAdapter(sensors, recyclerView);
+                sensorAdapter = new SensorAdapter(sensors, recyclerView, wsService, MainActivity.this);
                 recyclerView.setAdapter(sensorAdapter);
                 sensorAdapter.notifyDataSetChanged();
                 for (Sensor s : sensory){
                     sensors.add(s);
-//                    System.out.println("item count " +sensorAdapter.getItemCount());
-//                    System.out.println("kafelek " + s.getName() + s.getOwnerDevice() + ((TemperatureSensor)s).getTemp() );
                     sensorAdapter.notifyItemInserted(sensors.size()-1);
                 }
             }
         });
 
-    }
-
-    public void addToRecyclerView(Device device){
-        if (!device.getSensorList().isEmpty()){
-            sensors.addAll(device.getSensorList());
-            recyclerView.setAdapter(new SensorAdapter(sensors, recyclerView));
-        }
     }
 
     public void addDevice(){
@@ -200,13 +200,20 @@ public class MainActivity extends AppCompatActivity implements WSService.Callbac
         alert.show();
     }
 
-    @Override
-    protected void onDestroy() {
-        unbindService(mConnection);
-        stopService(serviceIntent);
-        System.out.println("main activity on destroy called");
-        super.onDestroy();
-        getDelegate().onDestroy();
+    public void menuAbout(){
+        String msg = "Smart home application created by Kamil Bajdo. More informations can be found at \n www.github.com/KamillB";
+        final SpannableString s = new SpannableString(msg);
+        Linkify.addLinks(s, Linkify.ALL);
+
+        final AlertDialog alert = new AlertDialog.Builder(this)
+                .setPositiveButton("OK", null)
+                .setTitle("About")
+                .setMessage(s)
+                .create();
+
+        alert.show();
+
+        ((TextView) alert.findViewById(android.R.id.message)).setMovementMethod(LinkMovementMethod.getInstance());
     }
 
 }
