@@ -1,4 +1,4 @@
-package com.example.kamil.smartrpi.models;
+package com.example.kamil.smartrpi.models.messages;
 
 public class WsMessage {
     private String sessionKey;

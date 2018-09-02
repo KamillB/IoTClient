@@ -3,14 +3,12 @@ package com.example.kamil.smartrpi;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.kamil.smartrpi.models.UserModel;
+import com.example.kamil.smartrpi.models.messages.UserModel;
 import com.example.kamil.smartrpi.rest.RestMethods;
 import com.example.kamil.smartrpi.rest.RestService;
 import com.example.kamil.smartrpi.validation.SignUpMailTextWatcher;

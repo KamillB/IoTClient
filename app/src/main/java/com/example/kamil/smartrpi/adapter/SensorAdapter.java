@@ -7,34 +7,25 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.media.Image;
-import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.kamil.smartrpi.MainActivity;
 import com.example.kamil.smartrpi.R;
-import com.example.kamil.smartrpi.models.ImageSensor;
-import com.example.kamil.smartrpi.models.Sensor;
-import com.example.kamil.smartrpi.models.TemperatureSensor;
+import com.example.kamil.smartrpi.models.data.ImageSensor;
+import com.example.kamil.smartrpi.models.data.Sensor;
+import com.example.kamil.smartrpi.models.data.TemperatureSensor;
 import com.example.kamil.smartrpi.websocket.WSService;
-
-import org.w3c.dom.Text;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-
-import static android.content.ContentValues.TAG;
 
 public class SensorAdapter extends RecyclerView.Adapter {
     private ArrayList<Sensor> mSensors;

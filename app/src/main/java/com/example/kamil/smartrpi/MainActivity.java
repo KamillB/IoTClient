@@ -23,7 +23,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.example.kamil.smartrpi.adapter.SensorAdapter;
-import com.example.kamil.smartrpi.models.*;
+import com.example.kamil.smartrpi.models.data.Sensor;
+import com.example.kamil.smartrpi.models.messages.Payload;
 import com.example.kamil.smartrpi.websocket.WSService;
 
 import java.util.ArrayList;
@@ -116,8 +117,6 @@ public class MainActivity extends AppCompatActivity implements WSService.Callbac
             stopWsService();
             startWsService();
             wsService.getAllSensors();
-
-
             return true;
         }
         if (id == R.id.action_about){
@@ -125,11 +124,11 @@ public class MainActivity extends AppCompatActivity implements WSService.Callbac
             return true;
         }
         if (id == R.id.action_log_out){
-            //TODO logout user
+            menuLogout();
             return true;
         }
         if (id == R.id.action_add_device){
-            addDevice();
+            menuAddDevice();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -175,7 +174,7 @@ public class MainActivity extends AppCompatActivity implements WSService.Callbac
 
     }
 
-    public void addDevice(){
+    public void menuAddDevice(){
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
         final EditText input = new EditText(this);
 
@@ -214,6 +213,12 @@ public class MainActivity extends AppCompatActivity implements WSService.Callbac
         alert.show();
 
         ((TextView) alert.findViewById(android.R.id.message)).setMovementMethod(LinkMovementMethod.getInstance());
+    }
+
+    public void menuLogout() {
+        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
     }
 
 }

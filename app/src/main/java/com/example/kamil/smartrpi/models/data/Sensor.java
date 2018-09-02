@@ -1,4 +1,4 @@
-package com.example.kamil.smartrpi.models;
+package com.example.kamil.smartrpi.models.data;
 
 public class Sensor {
     protected String name;

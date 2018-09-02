@@ -1,4 +1,6 @@
-package com.example.kamil.smartrpi.models;
+package com.example.kamil.smartrpi.models.data;
+
+import com.example.kamil.smartrpi.models.data.Sensor;
 
 import java.util.List;
 

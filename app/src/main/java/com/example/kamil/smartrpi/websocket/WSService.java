@@ -17,11 +17,16 @@ import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
 import okio.ByteString;
 
-import com.example.kamil.smartrpi.models.*;
+import com.example.kamil.smartrpi.models.messages.ImageModel;
+import com.example.kamil.smartrpi.models.data.ImageSensor;
+import com.example.kamil.smartrpi.models.data.Sensor;
+import com.example.kamil.smartrpi.models.messages.TemperatureModel;
+import com.example.kamil.smartrpi.models.data.TemperatureSensor;
+import com.example.kamil.smartrpi.models.messages.Payload;
+import com.example.kamil.smartrpi.models.messages.WsMessage;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
 
 public class WSService extends Service {
@@ -78,6 +83,8 @@ public class WSService extends Service {
                     switch(msg.getType()){
                         case "sensorList" :
                             updateSensorList(msg.getPayload());
+                            break;
+                        case "getTemperatureGraphData" :
                             break;
                     }
                 }

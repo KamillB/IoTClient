@@ -1,4 +1,4 @@
-package com.example.kamil.smartrpi.models;
+package com.example.kamil.smartrpi.models.data;
 
 public class ImageSensor extends Sensor {
     private byte[] image;
