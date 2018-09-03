@@ -18,6 +18,7 @@ import android.widget.TextView;
 
 import com.example.kamil.smartrpi.R;
 import com.example.kamil.smartrpi.models.data.ImageSensor;
+import com.example.kamil.smartrpi.models.data.PeripherySensor;
 import com.example.kamil.smartrpi.models.data.Sensor;
 import com.example.kamil.smartrpi.models.data.TemperatureSensor;
 import com.example.kamil.smartrpi.websocket.WSService;
@@ -93,12 +94,14 @@ public class SensorAdapter extends RecyclerView.Adapter {
                 int position = mRecyclerView.getChildAdapterPosition(v);
                 Sensor sensor = mSensors.get(position);
                 if (sensor instanceof TemperatureSensor){
-                    mWsService.getSensorData();
+                    // do something with temperature
                 }
                 else if (sensor instanceof  ImageSensor){
-                    mWsService.getSensorData();
-
+                    // do something with image
                     showImageDialog(sensor);
+                }
+                else if (sensor instanceof PeripherySensor){
+                    mWsService.switchPeripheryStatus(sensor);
                 }
             }
         });
@@ -137,6 +140,27 @@ public class SensorAdapter extends RecyclerView.Adapter {
             ((SensorViewHolder) viewHolder).mContentText.setVisibility(View.GONE);
             ((SensorViewHolder) viewHolder).mContentImage.setImageBitmap(Bitmap.createScaledBitmap(thumbnailBitmap,
                     THUMBNAIL_WIDTH,THUMBNAIL_HEIGHT,false));
+        }
+        else if (sensor instanceof PeripherySensor){
+            Date date = new Date(((PeripherySensor) sensor).getMilis());
+            DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss\ndd/MM/yyyy");
+            Resources resources = activity.getResources();
+            Integer imageIdentifier = resources.getIdentifier("house_icon", "drawable", activity.getPackageName());
+
+            ((SensorViewHolder) viewHolder).mSensorImage.setImageDrawable(resources.getDrawable(imageIdentifier));
+            ((SensorViewHolder) viewHolder).mTitle.setText(sensor.getName());
+            ((SensorViewHolder) viewHolder).mDate.setText(dateFormat.format(date.getTime()));
+
+            ((SensorViewHolder) viewHolder).mContentImage.setVisibility(View.GONE);
+            if (((PeripherySensor) sensor).getStatus() == 1){
+                ((SensorViewHolder) viewHolder).mContentText.setText("On");
+            }
+            else if (((PeripherySensor) sensor).getStatus() == 0){
+                ((SensorViewHolder) viewHolder).mContentText.setText("Off");
+            }
+            else {
+                ((SensorViewHolder) viewHolder).mContentText.setText("Unknown");
+            }
         }
 
     }

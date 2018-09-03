@@ -17,9 +17,11 @@ import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
 import okio.ByteString;
 
+import com.example.kamil.smartrpi.models.data.PeripherySensor;
 import com.example.kamil.smartrpi.models.messages.ImageModel;
 import com.example.kamil.smartrpi.models.data.ImageSensor;
 import com.example.kamil.smartrpi.models.data.Sensor;
+import com.example.kamil.smartrpi.models.messages.PeripheryModel;
 import com.example.kamil.smartrpi.models.messages.TemperatureModel;
 import com.example.kamil.smartrpi.models.data.TemperatureSensor;
 import com.example.kamil.smartrpi.models.messages.Payload;
@@ -109,6 +111,7 @@ public class WSService extends Service {
     public void updateSensorList(Payload payload){
         final List<ImageModel> iModel = payload.getImageModel();
         final List<TemperatureModel> tModel = payload.getTemperatureModel();
+        final List<PeripheryModel> pModel = payload.getPeripheryModels();
         final List<Sensor> sensors = new ArrayList<>();
         handler.post(new Runnable() {
             @Override
@@ -131,8 +134,20 @@ public class WSService extends Service {
                         t.getMilis()
                 ));
             }
+            List<PeripherySensor> pSensor = new ArrayList<>();
+            for (PeripheryModel p : pModel){
+                pSensor.add(new PeripherySensor(
+                    p.getName(),
+                    p.getOwner(),
+                    p.getMilis(),
+                    p.getGpioBcm(),
+                    p.getStatus()
+                ));
+            }
+            sensors.addAll(pSensor);
             sensors.addAll(iSensor);
             sensors.addAll(tSensor);
+
             }
         });
             activity.updateRecyclerView(sensors);
@@ -200,9 +215,18 @@ public class WSService extends Service {
         ws.send(gson.toJson(message));
     }
 
-    public void getSensorData(){
+    public void switchPeripheryStatus(Sensor sensor){
+        List<PeripheryModel> pList = new ArrayList<>();
+        pList.add(new PeripheryModel(
+                sensor.getOwnerDevice(),
+                ((PeripherySensor) sensor).getMilis(),
+                sensor.getName(),
+                ((PeripherySensor) sensor).getGpioBcm(),
+                ((PeripherySensor) sensor).getStatus()
+                ));
         Payload payload = new Payload();
-        WsMessage message = new WsMessage(sessionKey, "i want i all and i want it now!", payload);
+        payload.setPeripheryModels(pList);
+        WsMessage message = new WsMessage(sessionKey, "periphery", payload);
         ws.send(gson.toJson(message));
     }
 
