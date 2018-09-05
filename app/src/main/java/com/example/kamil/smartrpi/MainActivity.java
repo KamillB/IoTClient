@@ -19,15 +19,32 @@ import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import com.example.kamil.smartrpi.adapter.SensorAdapter;
+import com.example.kamil.smartrpi.dialog.TemperatureGraphDialog;
+import com.example.kamil.smartrpi.models.data.ImageSensor;
+import com.example.kamil.smartrpi.models.data.PeripherySensor;
 import com.example.kamil.smartrpi.models.data.Sensor;
+import com.example.kamil.smartrpi.models.data.TemperatureSensor;
+import com.example.kamil.smartrpi.models.messages.ImageModel;
 import com.example.kamil.smartrpi.models.messages.Payload;
+import com.example.kamil.smartrpi.models.messages.PeripheryModel;
+import com.example.kamil.smartrpi.models.messages.TemperatureModel;
 import com.example.kamil.smartrpi.websocket.WSService;
+import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.helper.DateAsXAxisLabelFormatter;
+import com.jjoe64.graphview.series.DataPoint;
+import com.jjoe64.graphview.series.LineGraphSeries;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 import butterknife.Bind;
@@ -149,11 +166,29 @@ public class MainActivity extends AppCompatActivity implements WSService.Callbac
     }
 
     @Override
-    public void updateClient(Payload payload){
+    public void updateClient(Payload payload) {
     }
 
     @Override
     public void changeBtnName(String name){
+    }
+
+    @Override
+    public void plotTemperatureGraph(List<TemperatureModel> temperatures){
+        if (!temperatures.isEmpty()) {
+            if (temperatures.size() > 50) {
+                temperatures = temperatures.subList(Math.max(temperatures.size() - 50, 0), temperatures.size());
+            }
+            Collections.sort(temperatures, new Comparator<TemperatureModel>() {
+                @Override
+                public int compare(TemperatureModel o1, TemperatureModel o2) {
+                    return o1.getMilis().compareTo(o2.getMilis());
+                }
+            });
+            TemperatureGraphDialog tgdialog = new TemperatureGraphDialog(MainActivity.this, temperatures);
+            tgdialog.getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.MATCH_PARENT);
+            tgdialog.show();
+        }
     }
 
     @Override
@@ -171,7 +206,6 @@ public class MainActivity extends AppCompatActivity implements WSService.Callbac
                 }
             }
         });
-
     }
 
     public void menuAddDevice(){
