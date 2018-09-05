@@ -17,6 +17,8 @@ import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
 import okio.ByteString;
 
+import com.example.kamil.smartrpi.MainActivity;
+import com.example.kamil.smartrpi.dialog.TemperatureGraphDialog;
 import com.example.kamil.smartrpi.models.data.PeripherySensor;
 import com.example.kamil.smartrpi.models.messages.ImageModel;
 import com.example.kamil.smartrpi.models.data.ImageSensor;
@@ -86,7 +88,12 @@ public class WSService extends Service {
                         case "sensorList" :
                             updateSensorList(msg.getPayload());
                             break;
-                        case "getTemperatureGraphData" :
+                        case "temperatureArchiveData" :
+                            activity.plotTemperatureGraph(msg.getPayload().getTemperatureModel());
+                            break;
+
+                        case "runnableSensors" :
+                            activity.updateClient(msg.getPayload());
                             break;
                     }
                 }
@@ -230,7 +237,19 @@ public class WSService extends Service {
         ws.send(gson.toJson(message));
     }
 
-
+    public void plotTemperatureGraph(Sensor sensor){
+        List<TemperatureModel> tList = new ArrayList<>();
+        tList.add(new TemperatureModel(
+                sensor.getOwnerDevice(),
+                ((TemperatureSensor) sensor).getTemp(),
+                ((TemperatureSensor) sensor).getMilis(),
+                sensor.getName()
+                ));
+        Payload payload = new Payload();
+        payload.setTemperatureModel(tList);
+        WsMessage message = new WsMessage(sessionKey, "temperatureArchive", payload);
+        ws.send(gson.toJson(message));
+    }
 
 
 
@@ -248,8 +267,10 @@ public class WSService extends Service {
     ////////////////////////////////////////////////////////////////
     //Interface for activity
     public interface Callbacks {
-        void updateClient(Payload payload);
         void changeBtnName(String name);
+
+        void updateClient(Payload payload);
         void updateRecyclerView(List<Sensor> sensory);
+        void plotTemperatureGraph(List<TemperatureModel> temperatures);
     }
 }
