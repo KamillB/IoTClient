@@ -94,6 +94,7 @@ public class SensorAdapter extends RecyclerView.Adapter {
                 int position = mRecyclerView.getChildAdapterPosition(v);
                 Sensor sensor = mSensors.get(position);
                 if (sensor instanceof TemperatureSensor){
+                    mWsService.plotTemperatureGraph(sensor);
                     // do something with temperature
                 }
                 else if (sensor instanceof  ImageSensor){
@@ -116,7 +117,7 @@ public class SensorAdapter extends RecyclerView.Adapter {
             Date date = new Date(((TemperatureSensor)sensor).getMilis());
             DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss\ndd/MM/yyyy");
             Resources resources = activity.getResources();
-            Integer imageIdentifier = resources.getIdentifier("house_icon", "drawable", activity.getPackageName());
+            Integer imageIdentifier = resources.getIdentifier("thermometer", "drawable", activity.getPackageName());
 
             ((SensorViewHolder) viewHolder).mSensorImage.setImageDrawable(resources.getDrawable(imageIdentifier));
             ((SensorViewHolder) viewHolder).mTitle.setText(sensor.getName());
@@ -131,7 +132,7 @@ public class SensorAdapter extends RecyclerView.Adapter {
                     0, ((ImageSensor) sensor).getImage().length);
             DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss\ndd/MM/yyyy");
             Resources resources = activity.getResources();
-            Integer imageIdentifier = resources.getIdentifier("house_icon", "drawable", activity.getPackageName());
+            Integer imageIdentifier = resources.getIdentifier("camera", "drawable", activity.getPackageName());
 
             ((SensorViewHolder) viewHolder).mSensorImage.setImageDrawable(resources.getDrawable(imageIdentifier));
             ((SensorViewHolder) viewHolder).mTitle.setText(sensor.getName());
@@ -145,7 +146,7 @@ public class SensorAdapter extends RecyclerView.Adapter {
             Date date = new Date(((PeripherySensor) sensor).getMilis());
             DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss\ndd/MM/yyyy");
             Resources resources = activity.getResources();
-            Integer imageIdentifier = resources.getIdentifier("house_icon", "drawable", activity.getPackageName());
+            Integer imageIdentifier = resources.getIdentifier("device", "drawable", activity.getPackageName());
 
             ((SensorViewHolder) viewHolder).mSensorImage.setImageDrawable(resources.getDrawable(imageIdentifier));
             ((SensorViewHolder) viewHolder).mTitle.setText(sensor.getName());
