@@ -234,7 +234,10 @@ public class MainActivity extends AppCompatActivity implements WSService.Callbac
     }
 
     public void menuAbout(){
-        String msg = "Smart home application created by Kamil Bajdo. More informations can be found at \n www.github.com/KamillB";
+        String msg = "Smart home application created by Kamil Bajdo. More informations can be found at \n" +
+                " www.github.com/KamillB \n" +
+                "\n " +
+                " Icons taken from website www.shareicon.net";
         final SpannableString s = new SpannableString(msg);
         Linkify.addLinks(s, Linkify.ALL);
 
