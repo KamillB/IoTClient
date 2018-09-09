@@ -16,7 +16,7 @@ public class LoginMailTextWatcher implements TextWatcher {
 
     @Override
     public void afterTextChanged(Editable s) {
-        if (s.length() >= 5 ){
+        if (s.length() >= 7 ){
  //           if (s.toString().matches(EMAIL_VERIFICATION)) {
                 LoginActivity.mail_valid = true;
 //            }
