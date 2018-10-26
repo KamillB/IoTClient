@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -167,6 +169,39 @@ public class MainActivity extends AppCompatActivity implements WSService.Callbac
 
     @Override
     public void updateClient(Payload payload) {
+
+        //| | !payload.getTemperatureModel().isEmpty()
+        if (payload.getTemperatureModel() != null){
+            for (Integer i=0; i<sensors.size(); i++){
+                if (sensors.get(i).getName().equals(payload.getTemperatureModel().get(0).getName())){
+                    ((TemperatureSensor) sensors.get(i)).setMilis(payload.getTemperatureModel().get(0).getMilis());
+                    ((TemperatureSensor) sensors.get(i)).setTemp(payload.getTemperatureModel().get(0).getTemp());
+                    sensorAdapter.notifyDataSetChanged();
+                }
+            }
+        }
+        // || !payload.getImageModel().isEmpty()
+        else if (payload.getImageModel() != null){
+            for (Integer i=0; i<sensors.size(); i++){
+                if (sensors.get(i).getName().equals(payload.getImageModel().get(0).getName())){
+                    ((ImageSensor) sensors.get(i)).setMilis(payload.getImageModel().get(0).getMilis());
+                    ((ImageSensor) sensors.get(i)).setImage(
+                            android.util.Base64.decode(payload.getImageModel().get(0).getImage(), android.util.Base64.DEFAULT)
+                    );
+                    sensorAdapter.notifyDataSetChanged();
+                }
+            }
+        }
+        // || !payload.getPeripheryModels().isEmpty()
+        else if (payload.getPeripheryModels() != null){
+            for (Integer i=0; i<sensors.size(); i++){
+                if (sensors.get(i).getName().equals(payload.getPeripheryModels().get(0).getName())){
+                    ((PeripherySensor) sensors.get(i)).setMilis(payload.getPeripheryModels().get(0).getMilis());
+                    ((PeripherySensor) sensors.get(i)).setStatus(payload.getPeripheryModels().get(0).getStatus());
+                    sensorAdapter.notifyDataSetChanged();
+                }
+            }
+        }
     }
 
     @Override

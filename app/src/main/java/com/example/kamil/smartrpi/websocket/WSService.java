@@ -88,11 +88,18 @@ public class WSService extends Service {
                         case "sensorList" :
                             updateSensorList(msg.getPayload());
                             break;
+
                         case "temperatureArchiveData" :
                             activity.plotTemperatureGraph(msg.getPayload().getTemperatureModel());
                             break;
 
+                        // for server runnable interval checking data change
+                        //will be deleted probably
                         case "runnableSensors" :
+                            activity.updateClient(msg.getPayload());
+                            break;
+
+                        case "valueChanged" :
                             activity.updateClient(msg.getPayload());
                             break;
                     }
